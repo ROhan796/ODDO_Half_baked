@@ -24,7 +24,7 @@ async def get_current_user(
             detail="Invalid or expired token",
         )
 
-    user = await db.get(User, payload["user_id"])
+    user = await db.get(User, payload["sub"])
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

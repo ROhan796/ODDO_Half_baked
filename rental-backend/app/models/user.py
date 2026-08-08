@@ -3,7 +3,7 @@ import uuid
 from datetime import datetime
 from sqlalchemy import (
     Column, String, Boolean, Date, DateTime, SmallInteger, Text, Enum as SAEnum,
-    ForeignKey, Index, JSON
+    ForeignKey, Index, JSON, Integer, Numeric
 )
 from sqlalchemy.dialects.postgresql import UUID, ARRAY, INET, JSONB
 from sqlalchemy.orm import relationship
@@ -89,9 +89,9 @@ class User(BaseModel):
         JSONB,
         default={"sms": True, "email": True, "push": True},
     )
-    points_balance = Column(default=0)
-    lifetime_rentals = Column(default=0)
-    lifetime_spend = Column(default=0)
+    points_balance = Column(Integer, default=0)
+    lifetime_rentals = Column(Integer, default=0)
+    lifetime_spend = Column(Numeric(14, 2), default=0)
     last_rental_at = Column(DateTime(timezone=True), nullable=True)
     referral_code = Column(String(20), unique=True, nullable=True)
     referred_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
@@ -145,7 +145,7 @@ class KYCRecord(BaseModel):
     id_doc_url = Column(Text, nullable=True)
     selfie_url = Column(Text, nullable=True)
     liveness_video_url = Column(Text, nullable=True)
-    face_match_score = Column(default=None, nullable=True)
+    face_match_score = Column(Numeric(5, 2), nullable=True)
     liveness_passed = Column(Boolean, nullable=True)
     address_doc_url = Column(Text, nullable=True)
     address_verified = Column(Boolean, nullable=True)

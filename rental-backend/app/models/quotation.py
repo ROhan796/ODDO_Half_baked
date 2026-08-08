@@ -1,7 +1,7 @@
 # app/models/quotation.py
 import uuid
 from sqlalchemy import (
-    Column, String, DateTime, Text, Enum as SAEnum,
+    Column, String, Boolean, DateTime, Text, Enum as SAEnum,
     ForeignKey, Numeric, Integer
 )
 from sqlalchemy.dialects.postgresql import UUID, JSONB
