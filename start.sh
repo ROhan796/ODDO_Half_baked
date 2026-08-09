@@ -76,6 +76,10 @@ setup_backend() {
     # Activate venv
     source venv/bin/activate
 
+    # Verify correct Python is being used
+    VENV_PYTHON=$(which python)
+    echo -e "${GREEN}  ✓ Using $(python --version 2>&1) at ${VENV_PYTHON}${NC}"
+
     # Set OpenSSL paths for macOS
     if [ -d "/usr/local/opt/openssl@3" ]; then
         export LDFLAGS="-L/usr/local/opt/openssl@3/lib"

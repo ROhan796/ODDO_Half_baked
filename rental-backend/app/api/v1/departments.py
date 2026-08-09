@@ -25,7 +25,7 @@ router = APIRouter()
 async def list_departments(
     enterprise_id: uuid.UUID,
     db: AsyncSession = Depends(get_read_db),
-    current_user: User = get_current_user,
+    current_user: User = Depends(get_current_user),
 ):
     """List departments for an enterprise."""
     service = DepartmentService(db)
@@ -52,7 +52,7 @@ async def create_department(
 async def get_department(
     department_id: uuid.UUID,
     db: AsyncSession = Depends(get_read_db),
-    current_user: User = get_current_user,
+    current_user: User = Depends(get_current_user),
 ):
     """Get department by ID."""
     service = DepartmentService(db)

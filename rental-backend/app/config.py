@@ -30,13 +30,13 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
     REFRESH_TOKEN_EXPIRE_DAYS: int = 30
 
-    # File Storage (Cloudflare R2)
-    R2_ACCOUNT_ID: str = ""
-    R2_ACCESS_KEY_ID: str = ""
-    R2_SECRET_ACCESS_KEY: str = ""
-    R2_BUCKET_NAME: str = "rental-files"
-    R2_PUBLIC_URL: str = ""
-    R2_ENDPOINT_URL: str = ""
+    # File Storage (Backblaze B2 / S3-compatible)
+    STORAGE_ACCOUNT_ID: str = ""
+    STORAGE_ACCESS_KEY_ID: str = ""
+    STORAGE_SECRET_ACCESS_KEY: str = ""
+    STORAGE_BUCKET_NAME: str = "rental-files"
+    STORAGE_PUBLIC_URL: str = ""
+    STORAGE_ENDPOINT_URL: str = ""
 
     # Razorpay
     RAZORPAY_KEY_ID: str = ""

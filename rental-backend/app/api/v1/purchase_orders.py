@@ -27,7 +27,7 @@ async def list_purchase_orders(
     enterprise_id: Optional[uuid.UUID] = None,
     status: Optional[str] = None,
     db: AsyncSession = Depends(get_read_db),
-    current_user: User = get_current_user,
+    current_user: User = Depends(get_current_user),
 ):
     """List purchase orders with optional filters."""
     service = PurchaseOrderService(db)
@@ -45,7 +45,7 @@ async def create_purchase_order(
     data: PORequisitionCreate,
     enterprise_id: uuid.UUID = Query(...),
     db: AsyncSession = Depends(get_db),
-    current_user: User = get_current_user,
+    current_user: User = Depends(get_current_user),
 ):
     """Create a new purchase order requisition."""
     service = PurchaseOrderService(db)
@@ -61,7 +61,7 @@ async def create_purchase_order(
 async def get_purchase_order(
     po_id: uuid.UUID,
     db: AsyncSession = Depends(get_read_db),
-    current_user: User = get_current_user,
+    current_user: User = Depends(get_current_user),
 ):
     """Get purchase order by ID."""
     service = PurchaseOrderService(db)

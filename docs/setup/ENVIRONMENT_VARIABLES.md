@@ -44,19 +44,19 @@
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | No | `15` | Access token TTL |
 | `REFRESH_TOKEN_EXPIRE_DAYS` | No | `30` | Refresh token TTL |
 
-### File Storage (Cloudflare R2)
+### File Storage (Backblaze B2)
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `R2_ACCOUNT_ID` | **Yes** | - | Cloudflare account ID |
-| `R2_ACCESS_KEY_ID` | **Yes** | - | R2 API token access key |
-| `R2_SECRET_ACCESS_KEY` | **Yes** | - | R2 API token secret |
-| `R2_BUCKET_NAME` | No | `rental-files` | R2 bucket name |
-| `R2_PUBLIC_URL` | **Yes** | - | Public CDN URL |
-| `R2_ENDPOINT_URL` | **Yes** | - | S3-compatible endpoint |
+| `STORAGE_ACCOUNT_ID` | No | - | Account ID (optional for B2) |
+| `STORAGE_ACCESS_KEY_ID` | **Yes** | - | B2 Application Key ID |
+| `STORAGE_SECRET_ACCESS_KEY` | **Yes** | - | B2 Application Key |
+| `STORAGE_BUCKET_NAME` | No | `rental-files` | Bucket name |
+| `STORAGE_PUBLIC_URL` | **Yes** | - | Public URL for file access |
+| `STORAGE_ENDPOINT_URL` | **Yes** | - | S3-compatible endpoint |
 
-**Endpoint format:** `https://{account_id}.r2.cloudflarestorage.com`
-**Public URL format:** `https://pub-{hash}.r2.dev` or custom domain
+**Endpoint format:** `https://s3.us-west-004.backblazeb2.com`
+**Public URL format:** `https://f004.backblazeb2.com/file/rental-files`
 
 ### Payments (Razorpay)
 
@@ -155,14 +155,13 @@ ACCESS_TOKEN_EXPIRE_MINUTES=15
 REFRESH_TOKEN_EXPIRE_DAYS=30
 
 # ===========================================
-# FILE STORAGE (Cloudflare R2)
+# FILE STORAGE (Backblaze B2 - Free 10GB)
 # ===========================================
-R2_ACCOUNT_ID=your-cloudflare-account-id
-R2_ACCESS_KEY_ID=your-r2-access-key
-R2_SECRET_ACCESS_KEY=your-r2-secret-key
-R2_BUCKET_NAME=rental-files
-R2_PUBLIC_URL=https://pub-xxx.r2.dev
-R2_ENDPOINT_URL=https://xxx.r2.cloudflarestorage.com
+STORAGE_ACCESS_KEY_ID=your_b2_key_id
+STORAGE_SECRET_ACCESS_KEY=your_b2_app_key
+STORAGE_BUCKET_NAME=rental-files
+STORAGE_PUBLIC_URL=https://f004.backblazeb2.com/file/rental-files
+STORAGE_ENDPOINT_URL=https://s3.us-west-004.backblazeb2.com
 
 # ===========================================
 # PAYMENTS (Razorpay)

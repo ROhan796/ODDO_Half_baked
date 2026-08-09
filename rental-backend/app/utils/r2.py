@@ -1,4 +1,5 @@
 # app/utils/r2.py
+# S3-compatible object storage client (Backblaze B2 / Cloudflare R2 / AWS S3)
 import boto3
 from botocore.config import Config
 from typing import Optional
@@ -8,20 +9,20 @@ from app.config import settings
 
 
 class R2Storage:
-    """Cloudflare R2 storage client."""
+    """S3-compatible storage client."""
 
     def __init__(self):
         self._s3_client = None
-        self.bucket_name = settings.R2_BUCKET_NAME
+        self.bucket_name = settings.STORAGE_BUCKET_NAME
 
     @property
     def s3_client(self):
         if self._s3_client is None:
             self._s3_client = boto3.client(
                 "s3",
-                endpoint_url=settings.R2_ENDPOINT_URL,
-                aws_access_key_id=settings.R2_ACCESS_KEY_ID,
-                aws_secret_access_key=settings.R2_SECRET_ACCESS_KEY,
+                endpoint_url=settings.STORAGE_ENDPOINT_URL,
+                aws_access_key_id=settings.STORAGE_ACCESS_KEY_ID,
+                aws_secret_access_key=settings.STORAGE_SECRET_ACCESS_KEY,
                 config=Config(
                     signature_version="s3v4",
                     s3={"addressing_style": "path"},
@@ -53,6 +54,7 @@ class R2Storage:
         return {
             "upload_url": presigned_url,
             "file_key": key,
+            "public_url": f"{settings.STORAGE_PUBLIC_URL}/{key}",
             "expires_at": (datetime.utcnow() + timedelta(seconds=expires_in)).isoformat(),
         }
 
@@ -71,6 +73,10 @@ class R2Storage:
             ExpiresIn=expires_in,
         )
         return presigned_url
+
+    async def get_public_url(self, file_key: str) -> str:
+        """Get public URL for a file (no expiry)."""
+        return f"{settings.STORAGE_PUBLIC_URL}/{file_key}"
 
     async def delete_file(self, file_key: str) -> bool:
         """Delete file from storage."""
