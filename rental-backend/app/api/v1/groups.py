@@ -80,6 +80,37 @@ async def get_group(
     return group
 
 
+@router.get("/{group_id}/members", response_model=list[GroupMemberResponse])
+async def list_group_members(
+    group_id: uuid.UUID,
+    db: AsyncSession = Depends(get_read_db),
+    current_user: User = Depends(get_current_user),
+):
+    """List members of a group with user profile details and quotas."""
+    group = await db.get(Group, group_id)
+    if not group:
+        raise HTTPException(status_code=404, detail="Group not found")
+
+    result = await db.execute(
+        select(GroupMember, User)
+        .join(User, GroupMember.user_id == User.id)
+        .where(GroupMember.group_id == group_id)
+    )
+    rows = result.all()
+
+    response_items = []
+    for member, user in rows:
+        resp = GroupMemberResponse.model_validate(member)
+        resp.user_name = user.name
+        resp.user_email = user.email
+        resp.user_phone = user.phone
+        resp.user_role = user.role.value if hasattr(user.role, 'value') else str(user.role)
+        resp.profile_photo_url = user.profile_photo_url
+        response_items.append(resp)
+
+    return response_items
+
+
 @router.post("/{group_id}/members", response_model=GroupMemberResponse)
 async def add_member(
     group_id: uuid.UUID,
@@ -111,11 +142,12 @@ async def add_member(
         group_id=group_id,
         user_id=data.user_id,
         deposit_share_pct=data.deposit_share_pct,
-        trust_score_at_join=0,  # TODO: Get user trust score
+        trust_score_at_join=0,
     )
     db.add(member)
 
     group.current_member_count += 1
+    await db.commit()
 
     return member
 

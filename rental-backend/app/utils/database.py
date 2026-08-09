@@ -27,9 +27,9 @@ def _is_cloud_db(url: str) -> bool:
 
 
 # Primary engine (writes)
-primary_kwargs = {}
+primary_connect_args = {"statement_cache_size": 0}
 if _is_cloud_db(settings.DATABASE_URL):
-    primary_kwargs["connect_args"] = {"ssl": _get_ssl_context()}
+    primary_connect_args["ssl"] = _get_ssl_context()
 
 primary_engine = create_async_engine(
     settings.DATABASE_URL,
@@ -38,14 +38,14 @@ primary_engine = create_async_engine(
     pool_timeout=settings.DATABASE_POOL_TIMEOUT,
     pool_pre_ping=True,
     echo=settings.DEBUG,
-    **primary_kwargs,
+    connect_args=primary_connect_args,
 )
 
 # Read replica engine (reads)
 read_url = settings.DATABASE_READ_URL or settings.DATABASE_URL
-read_kwargs = {}
+read_connect_args = {"statement_cache_size": 0}
 if _is_cloud_db(read_url):
-    read_kwargs["connect_args"] = {"ssl": _get_ssl_context()}
+    read_connect_args["ssl"] = _get_ssl_context()
 
 read_engine = create_async_engine(
     read_url,
@@ -53,7 +53,7 @@ read_engine = create_async_engine(
     max_overflow=settings.DATABASE_MAX_OVERFLOW,
     pool_pre_ping=True,
     echo=False,
-    **read_kwargs,
+    connect_args=read_connect_args,
 )
 
 # Session factories

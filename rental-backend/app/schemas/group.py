@@ -49,6 +49,11 @@ class GroupMemberResponse(BaseModel):
     deposit_share_pct: float
     deposit_share_amount: float
     joined_at: Optional[datetime] = None
+    user_name: Optional[str] = None
+    user_email: Optional[str] = None
+    user_phone: Optional[str] = None
+    user_role: Optional[str] = None
+    profile_photo_url: Optional[str] = None
 
     class Config:
         from_attributes = True

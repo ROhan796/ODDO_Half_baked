@@ -17,18 +17,22 @@ from app.core.permissions import Role
 USER_ROLE_MAP: dict[str, str] = {
     # Super Admin — full access to everything
     "jetp292@gmail.com": Role.SUPER_ADMIN,
+    "admin@rental.com": Role.SUPER_ADMIN,
 
     # Ops Admin — manage properties, tenants, operations
     "rmxdeath@gmail.com": Role.OPS_ADMIN,
-
-    # Ops Admin — manage tenants, leases, payments
     "mannarohan@gmail.com": Role.OPS_ADMIN,
+    "admin@reprico.com": Role.OPS_ADMIN,
 
     # Field Agent — view-only, inspections, limited ops
     "rohanmannas2021@gmail.com": Role.FIELD_AGENT,
+    "suresh.agent@reprico.com": Role.FIELD_AGENT,
 
     # Portal User — customer-facing, own data only
     "roix107@gmail.com": Role.PORTAL_USER,
+    "rahul.sharma@example.com": Role.PORTAL_USER,
+    "priya.nair@nexusmedia.in": Role.PORTAL_USER,
+    "arjun@indiecreatives.org": Role.PORTAL_USER,
 }
 
 

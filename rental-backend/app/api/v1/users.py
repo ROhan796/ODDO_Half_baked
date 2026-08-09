@@ -11,6 +11,8 @@ from app.models.user import User
 from app.schemas.user import UserUpdate, UserResponse, UserListResponse
 from app.core.permissions import Permission
 
+from app.models.group import GroupMember
+
 router = APIRouter()
 
 
@@ -41,6 +43,7 @@ async def list_users(
     limit: int = Query(20, ge=1, le=100),
     search: Optional[str] = None,
     role: Optional[str] = None,
+    group_id: Optional[uuid.UUID] = None,
     db: AsyncSession = Depends(get_read_db),
     current_user: User = require_permission(Permission.CUSTOMER_VIEW.value),
 ):
@@ -56,6 +59,9 @@ async def list_users(
 
     if role:
         query = query.where(User.role == role)
+
+    if group_id:
+        query = query.join(GroupMember, GroupMember.user_id == User.id).where(GroupMember.group_id == group_id)
 
     count_query = select(func.count()).select_from(query.subquery())
     total = (await db.execute(count_query)).scalar()
