@@ -38,11 +38,11 @@ class Dispute(BaseModel):
     description = Column(Text, nullable=False)
     evidence_urls = Column(ARRAY(Text), default=[])
     status = Column(
-        SAEnum(DisputeStatus, name="dispute_status_enum"),
+        SAEnum(DisputeStatus, name="dispute_status_enum", create_type=False),
         default=DisputeStatus.OPEN,
     )
     resolution = Column(
-        SAEnum(DisputeResolution, name="dispute_resolution_enum"),
+        SAEnum(DisputeResolution, name="dispute_resolution_enum", create_type=False),
         nullable=True,
     )
     resolution_amount = Column(Numeric(12, 2), nullable=True)

@@ -29,7 +29,7 @@ class RepairCase(BaseModel):
     estimated_cost = Column(Numeric(12, 2), nullable=True)
     actual_cost = Column(Numeric(12, 2), nullable=True)
     status = Column(
-        SAEnum(RepairStatus, name="repair_status_enum"),
+        SAEnum(RepairStatus, name="repair_status_enum", create_type=False),
         default=RepairStatus.REPORTED,
     )
     assigned_to = Column(String(255), nullable=True)

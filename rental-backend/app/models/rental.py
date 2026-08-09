@@ -33,11 +33,11 @@ class Rental(BaseModel):
     quotation_id = Column(UUID(as_uuid=True), ForeignKey("quotations.id"), nullable=True)
     order_id = Column(UUID(as_uuid=True), nullable=True)
     status = Column(
-        SAEnum(RentalStatus, name="rental_status_enum"),
+        SAEnum(RentalStatus, name="rental_status_enum", create_type=False),
         default=RentalStatus.PENDING,
     )
     rental_type = Column(
-        SAEnum(RentalType, name="rental_type_enum"),
+        SAEnum(RentalType, name="rental_type_enum", create_type=False),
         nullable=False,
     )
     start_date = Column(Date, nullable=False)

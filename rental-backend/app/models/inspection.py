@@ -36,13 +36,13 @@ class InspectionReport(BaseModel):
     product_id = Column(UUID(as_uuid=True), ForeignKey("products.id"), nullable=False)
     inspector_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     inspection_type = Column(
-        SAEnum(InspectionType, name="inspection_type_enum"),
+        SAEnum(InspectionType, name="inspection_type_enum", create_type=False),
         nullable=False,
     )
     functional_check = Column(JSONB, default={})
     cosmetic_grade = Column(String(20), nullable=True)
     overall_grade = Column(
-        SAEnum(OverallGrade, name="overall_grade_enum"),
+        SAEnum(OverallGrade, name="overall_grade_enum", create_type=False),
         nullable=True,
     )
     accessories_status = Column(JSONB, default=[])
@@ -53,7 +53,7 @@ class InspectionReport(BaseModel):
     before_photo = Column(Text, nullable=True)
     after_photo = Column(Text, nullable=True)
     status = Column(
-        SAEnum(InspectionStatus, name="inspection_status_enum"),
+        SAEnum(InspectionStatus, name="inspection_status_enum", create_type=False),
         default=InspectionStatus.PENDING,
     )
 

@@ -29,7 +29,7 @@ class RecoveryCase(BaseModel):
     reason = Column(String(255), nullable=False)
     amount_outstanding = Column(Numeric(12, 2), nullable=False)
     status = Column(
-        SAEnum(RecoveryStatus, name="recovery_status_enum"),
+        SAEnum(RecoveryStatus, name="recovery_status_enum", create_type=False),
         default=RecoveryStatus.INITIATED,
     )
     recovery_agent = Column(String(255), nullable=True)

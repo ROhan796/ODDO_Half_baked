@@ -8,6 +8,7 @@ from sentry_sdk.integrations.fastapi import FastApiIntegration
 from app.config import settings
 from app.api.v1.router import api_router
 from app.websockets.handlers import ws_router
+from app.webhooks.clerk import router as clerk_webhook_router
 from app.middleware.request_id import RequestIDMiddleware
 from app.middleware.rate_limiter import RateLimiterMiddleware
 from app.middleware.audit import AuditMiddleware
@@ -32,6 +33,7 @@ if settings.SENTRY_DSN:
         dsn=settings.SENTRY_DSN,
         integrations=[FastApiIntegration()],
         traces_sample_rate=0.1,
+        send_default_pii=True,
     )
 
 app = FastAPI(
@@ -58,6 +60,7 @@ app.add_middleware(
 # Routes
 app.include_router(api_router, prefix="/api/v1")
 app.include_router(ws_router, prefix="/ws")
+app.include_router(clerk_webhook_router, prefix="/api/v1/webhooks")
 
 
 # Health check

@@ -37,18 +37,18 @@ class Notification(BaseModel):
 
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     type = Column(
-        SAEnum(NotificationType, name="notification_type_enum"),
+        SAEnum(NotificationType, name="notification_type_enum", create_type=False),
         nullable=False,
     )
     channel = Column(
-        SAEnum(NotificationChannel, name="notification_channel_enum"),
+        SAEnum(NotificationChannel, name="notification_channel_enum", create_type=False),
         nullable=False,
     )
     title = Column(String(255), nullable=False)
     message = Column(Text, nullable=False)
     data = Column(JSONB, default={})
     status = Column(
-        SAEnum(NotificationStatus, name="notification_status_enum"),
+        SAEnum(NotificationStatus, name="notification_status_enum", create_type=False),
         default=NotificationStatus.PENDING,
     )
     sent_at = Column(DateTime(timezone=True), nullable=True)
@@ -65,11 +65,11 @@ class NotificationTemplate(BaseModel):
 
     name = Column(String(255), unique=True, nullable=False)
     type = Column(
-        SAEnum(NotificationType, name="notification_template_type_enum"),
+        SAEnum(NotificationType, name="notification_template_type_enum", create_type=False),
         nullable=False,
     )
     channel = Column(
-        SAEnum(NotificationChannel, name="notification_template_channel_enum"),
+        SAEnum(NotificationChannel, name="notification_template_channel_enum", create_type=False),
         nullable=False,
     )
     subject = Column(String(255), nullable=True)

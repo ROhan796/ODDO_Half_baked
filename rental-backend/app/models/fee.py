@@ -27,7 +27,7 @@ class LateFee(BaseModel):
     total_amount = Column(Numeric(12, 2), nullable=False)
     waived_amount = Column(Numeric(12, 2), default=0)
     status = Column(
-        SAEnum(LateFeeStatus, name="late_fee_status_enum"),
+        SAEnum(LateFeeStatus, name="late_fee_status_enum", create_type=False),
         default=LateFeeStatus.CALCULATED,
     )
     waived_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)

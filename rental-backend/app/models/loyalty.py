@@ -22,7 +22,7 @@ class LoyaltyPointsLedger(BaseModel):
 
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     transaction_type = Column(
-        SAEnum(PointsTransactionType, name="points_transaction_type_enum"),
+        SAEnum(PointsTransactionType, name="points_transaction_type_enum", create_type=False),
         nullable=False,
     )
     points = Column(Integer, nullable=False)

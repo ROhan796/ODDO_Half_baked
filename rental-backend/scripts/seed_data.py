@@ -99,6 +99,7 @@ async def seed():
                 slug=prod_data["slug"],
                 category_id=cat.id,
                 status=ProductStatus.AVAILABLE,
+                daily_rate=prod_data["daily_rate"],
                 purchase_price=prod_data["purchase_price"],
                 current_value=prod_data["purchase_price"],
                 deposit_percentage=prod_data["deposit_pct"],

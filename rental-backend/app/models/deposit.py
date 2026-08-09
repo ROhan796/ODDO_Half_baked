@@ -27,7 +27,7 @@ class SecurityDeposit(BaseModel):
     customer_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     amount = Column(Numeric(12, 2), nullable=False)
     status = Column(
-        SAEnum(DepositStatus, name="deposit_status_enum"),
+        SAEnum(DepositStatus, name="deposit_status_enum", create_type=False),
         default=DepositStatus.PENDING,
     )
     authorization_code = Column(String(255), nullable=True)

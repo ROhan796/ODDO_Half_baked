@@ -34,14 +34,14 @@ class AvailabilityBlock(BaseModel):
 
     product_id = Column(UUID(as_uuid=True), ForeignKey("products.id"), nullable=False)
     block_type = Column(
-        SAEnum(BlockType, name="block_type_enum"),
+        SAEnum(BlockType, name="block_type_enum", create_type=False),
         nullable=False,
     )
     rental_id = Column(UUID(as_uuid=True), ForeignKey("rentals.id"), nullable=True)
     start_at = Column(DateTime(timezone=True), nullable=False)
     end_at = Column(DateTime(timezone=True), nullable=False)
     status = Column(
-        SAEnum(BlockStatus, name="block_status_enum"),
+        SAEnum(BlockStatus, name="block_status_enum", create_type=False),
         default=BlockStatus.ACTIVE,
     )
     booked_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
@@ -67,7 +67,7 @@ class Reservation(BaseModel):
     start_at = Column(DateTime(timezone=True), nullable=False)
     end_at = Column(DateTime(timezone=True), nullable=False)
     status = Column(
-        SAEnum(ReservationStatus, name="reservation_status_enum"),
+        SAEnum(ReservationStatus, name="reservation_status_enum", create_type=False),
         default=ReservationStatus.PENDING,
     )
     expires_at = Column(DateTime(timezone=True), nullable=False)

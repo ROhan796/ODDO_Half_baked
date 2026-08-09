@@ -70,7 +70,7 @@ class Group(BaseModel):
     trust_score = Column(Numeric(5, 2), default=0)
     trust_tier = Column(String(20), default="unverified")
     status = Column(
-        SAEnum(GroupStatus, name="group_status_enum"),
+        SAEnum(GroupStatus, name="group_status_enum", create_type=False),
         default=GroupStatus.ACTIVE,
     )
     max_members = Column(SmallInteger, default=20)
@@ -90,11 +90,11 @@ class GroupMember(BaseModel):
     group_id = Column(UUID(as_uuid=True), ForeignKey("groups.id", ondelete="CASCADE"), nullable=False)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     role = Column(
-        SAEnum(GroupMemberRole, name="group_member_role_enum"),
+        SAEnum(GroupMemberRole, name="group_member_role_enum", create_type=False),
         default=GroupMemberRole.MEMBER,
     )
     status = Column(
-        SAEnum(GroupMemberStatus, name="group_member_status_enum"),
+        SAEnum(GroupMemberStatus, name="group_member_status_enum", create_type=False),
         default=GroupMemberStatus.INVITED,
     )
     deposit_share_pct = Column(Numeric(5, 2), default=0)
@@ -115,7 +115,7 @@ class GroupDeposit(BaseModel):
     total_amount = Column(Numeric(12, 2), nullable=False)
     total_collected = Column(Numeric(12, 2), default=0)
     status = Column(
-        SAEnum(GroupDepositStatus, name="group_deposit_status_enum"),
+        SAEnum(GroupDepositStatus, name="group_deposit_status_enum", create_type=False),
         default=GroupDepositStatus.PENDING,
     )
     settled_at = Column(DateTime(timezone=True), nullable=True)
@@ -131,7 +131,7 @@ class GroupDepositMember(BaseModel):
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     amount = Column(Numeric(12, 2), nullable=False)
     payment_status = Column(
-        SAEnum(PaymentStatus, name="group_deposit_payment_status_enum"),
+        SAEnum(PaymentStatus, name="group_deposit_payment_status_enum", create_type=False),
         default=PaymentStatus.PENDING,
     )
     authorization_code = Column(String(255), nullable=True)
@@ -148,13 +148,13 @@ class GroupVote(BaseModel):
     group_id = Column(UUID(as_uuid=True), ForeignKey("groups.id"), nullable=False)
     rental_id = Column(UUID(as_uuid=True), ForeignKey("rentals.id"), nullable=True)
     vote_type = Column(
-        SAEnum(GroupVoteType, name="group_vote_type_enum"),
+        SAEnum(GroupVoteType, name="group_vote_type_enum", create_type=False),
         nullable=False,
     )
     requested_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     reason = Column(Text, nullable=True)
     status = Column(
-        SAEnum(GroupVoteStatus, name="group_vote_status_enum"),
+        SAEnum(GroupVoteStatus, name="group_vote_status_enum", create_type=False),
         default=GroupVoteStatus.PENDING,
     )
     votes_for = Column(SmallInteger, default=0)
@@ -172,7 +172,7 @@ class GroupVoteRecord(BaseModel):
     vote_id = Column(UUID(as_uuid=True), ForeignKey("group_votes.id", ondelete="CASCADE"), nullable=False)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     vote = Column(
-        SAEnum(VoteChoice, name="vote_choice_enum"),
+        SAEnum(VoteChoice, name="vote_choice_enum", create_type=False),
         nullable=False,
     )
     voted_at = Column(DateTime(timezone=True), nullable=True)

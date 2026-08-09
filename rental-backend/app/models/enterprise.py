@@ -37,7 +37,7 @@ class Enterprise(BaseModel):
 
     name = Column(String(255), nullable=False)
     legal_entity_type = Column(
-        SAEnum(LegalEntityType, name="legal_entity_type_enum"),
+        SAEnum(LegalEntityType, name="legal_entity_type_enum", create_type=False),
         nullable=False,
     )
     gst_number = Column(String(20), unique=True, nullable=True)
@@ -74,7 +74,7 @@ class EnterpriseMember(BaseModel):
     enterprise_id = Column(UUID(as_uuid=True), ForeignKey("enterprises.id", ondelete="CASCADE"), nullable=False)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), unique=True, nullable=False)
     sub_role = Column(
-        SAEnum(EnterpriseSubRole, name="enterprise_sub_role_enum"),
+        SAEnum(EnterpriseSubRole, name="enterprise_sub_role_enum", create_type=False),
         nullable=False,
     )
     department = Column(String(100), nullable=True)
@@ -95,7 +95,7 @@ class EnterpriseCreditTransaction(BaseModel):
 
     enterprise_id = Column(UUID(as_uuid=True), ForeignKey("enterprises.id"), nullable=False)
     type = Column(
-        SAEnum(EnterpriseCreditTransactionType, name="enterprise_credit_txn_type_enum"),
+        SAEnum(EnterpriseCreditTransactionType, name="enterprise_credit_txn_type_enum", create_type=False),
         nullable=False,
     )
     amount = Column(Numeric(12, 2), nullable=False)

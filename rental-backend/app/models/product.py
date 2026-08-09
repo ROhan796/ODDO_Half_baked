@@ -56,7 +56,7 @@ class Product(BaseModel):
     barcode = Column(String(100), nullable=True)
     sku = Column(String(100), unique=True, nullable=True)
     status = Column(
-        SAEnum(ProductStatus, name="product_status_enum"),
+        SAEnum(ProductStatus, name="product_status_enum", create_type=False),
         default=ProductStatus.AVAILABLE,
     )
     current_holder_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
@@ -71,10 +71,11 @@ class Product(BaseModel):
     warranty_expiry = Column(Date, nullable=True)
     location = Column(String(255), nullable=True)
     is_insured = Column(Boolean, default=False)
+    daily_rate = Column(Numeric(10, 2), nullable=True)
     deposit_percentage = Column(Numeric(5, 2), default=30.00)
     late_fee_rate = Column(Numeric(10, 2), nullable=True)
     late_fee_mode = Column(
-        SAEnum(LateFeeMode, name="late_fee_mode_enum"),
+        SAEnum(LateFeeMode, name="late_fee_mode_enum", create_type=False),
         default=LateFeeMode.DAILY,
     )
     grace_period_minutes = Column(Integer, default=30)

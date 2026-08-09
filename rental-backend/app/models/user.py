@@ -57,13 +57,14 @@ class OTPPurpose(str, enum.Enum):
 class User(BaseModel):
     __tablename__ = "users"
 
+    clerk_user_id = Column(String(255), unique=True, nullable=True, index=True)
     user_type = Column(
-        SAEnum(UserType, name="user_type_enum"),
+        SAEnum(UserType, name="user_type_enum", create_type=False),
         nullable=False,
         default=UserType.PERSONAL,
     )
     role = Column(
-        SAEnum(UserRole, name="user_role_enum"),
+        SAEnum(UserRole, name="user_role_enum", create_type=False),
         nullable=False,
     )
     phone = Column(String(15), unique=True, nullable=False, index=True)
@@ -73,7 +74,7 @@ class User(BaseModel):
     dob = Column(Date, nullable=True)
     profile_photo_url = Column(Text, nullable=True)
     kyc_status = Column(
-        SAEnum(KYCStatus, name="kyc_status_enum"),
+        SAEnum(KYCStatus, name="kyc_status_enum", create_type=False),
         default=KYCStatus.PENDING,
     )
     kyc_completed_at = Column(DateTime(timezone=True), nullable=True)
@@ -127,9 +128,9 @@ class OTPToken(BaseModel):
     __tablename__ = "otp_tokens"
 
     identifier = Column(String(255), nullable=False)
-    channel = Column(SAEnum(OTPChannel, name="otp_channel_enum"), nullable=False)
+    channel = Column(SAEnum(OTPChannel, name="otp_channel_enum", create_type=False), nullable=False)
     code = Column(String(6), nullable=False)
-    purpose = Column(SAEnum(OTPPurpose, name="otp_purpose_enum"), nullable=False)
+    purpose = Column(SAEnum(OTPPurpose, name="otp_purpose_enum", create_type=False), nullable=False)
     attempts = Column(SmallInteger, default=0)
     expires_at = Column(DateTime(timezone=True), nullable=False)
     verified_at = Column(DateTime(timezone=True), nullable=True)
@@ -139,7 +140,7 @@ class KYCRecord(BaseModel):
     __tablename__ = "kyc_records"
 
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    step = Column(SAEnum(KYCStep, name="kyc_step_enum"), nullable=False)
+    step = Column(SAEnum(KYCStep, name="kyc_step_enum", create_type=False), nullable=False)
     id_type = Column(String(20), nullable=True)
     id_number = Column(String(50), nullable=True)
     id_doc_url = Column(Text, nullable=True)

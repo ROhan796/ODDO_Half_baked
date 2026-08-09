@@ -36,7 +36,7 @@ class Agent(BaseModel):
 
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), unique=True, nullable=False)
     status = Column(
-        SAEnum(AgentStatus, name="agent_status_enum"),
+        SAEnum(AgentStatus, name="agent_status_enum", create_type=False),
         default=AgentStatus.OFFLINE,
     )
     location_hub = Column(String(255), nullable=True)
@@ -53,11 +53,11 @@ class AgentTask(BaseModel):
     rental_id = Column(UUID(as_uuid=True), ForeignKey("rentals.id"), nullable=False)
     agent_id = Column(UUID(as_uuid=True), ForeignKey("agents.id"), nullable=True)
     task_type = Column(
-        SAEnum(TaskType, name="agent_task_type_enum"),
+        SAEnum(TaskType, name="agent_task_type_enum", create_type=False),
         nullable=False,
     )
     status = Column(
-        SAEnum(TaskStatus, name="agent_task_status_enum"),
+        SAEnum(TaskStatus, name="agent_task_status_enum", create_type=False),
         default=TaskStatus.PENDING,
     )
     address = Column(Text, nullable=True)

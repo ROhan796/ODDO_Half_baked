@@ -26,7 +26,7 @@ class AuditLog(BaseModel):
 
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
     action = Column(
-        SAEnum(AuditAction, name="audit_action_enum"),
+        SAEnum(AuditAction, name="audit_action_enum", create_type=False),
         nullable=False,
     )
     resource_type = Column(String(100), nullable=False)

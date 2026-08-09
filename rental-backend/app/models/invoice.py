@@ -43,7 +43,7 @@ class Invoice(BaseModel):
     enterprise_id = Column(UUID(as_uuid=True), ForeignKey("enterprises.id"), nullable=True)
     rental_id = Column(UUID(as_uuid=True), ForeignKey("rentals.id"), nullable=True)
     status = Column(
-        SAEnum(InvoiceStatus, name="invoice_status_enum"),
+        SAEnum(InvoiceStatus, name="invoice_status_enum", create_type=False),
         default=InvoiceStatus.DRAFT,
     )
     subtotal = Column(Numeric(12, 2), nullable=False)
@@ -87,11 +87,11 @@ class Payment(BaseModel):
     customer_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     amount = Column(Numeric(12, 2), nullable=False)
     status = Column(
-        SAEnum(PaymentStatus, name="payment_status_enum"),
+        SAEnum(PaymentStatus, name="payment_status_enum", create_type=False),
         default=PaymentStatus.PENDING,
     )
     payment_method = Column(
-        SAEnum(PaymentMethod, name="payment_method_enum"),
+        SAEnum(PaymentMethod, name="payment_method_enum", create_type=False),
         nullable=False,
     )
     razorpay_order_id = Column(String(255), nullable=True)

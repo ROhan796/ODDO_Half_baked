@@ -28,7 +28,7 @@ class PORequisition(BaseModel):
     total_amount = Column(Numeric(12, 2), nullable=True)
     department = Column(String(100), nullable=True)
     status = Column(
-        SAEnum(POStatus, name="po_status_enum"),
+        SAEnum(POStatus, name="po_status_enum", create_type=False),
         default=POStatus.PENDING,
     )
     reviewed_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)

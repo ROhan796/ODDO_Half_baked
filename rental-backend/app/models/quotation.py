@@ -26,7 +26,7 @@ class Quotation(BaseModel):
     customer_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     enterprise_id = Column(UUID(as_uuid=True), ForeignKey("enterprises.id"), nullable=True)
     status = Column(
-        SAEnum(QuotationStatus, name="quotation_status_enum"),
+        SAEnum(QuotationStatus, name="quotation_status_enum", create_type=False),
         default=QuotationStatus.DRAFT,
     )
     items = Column(JSONB, nullable=False, default=[])

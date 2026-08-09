@@ -28,17 +28,17 @@ from app.config import settings
 router = APIRouter()
 
 
+# ── Legacy Auth Endpoints (kept for backward compatibility) ─────
+
 @router.post("/register", response_model=TokenResponse)
 async def register(data: RegisterRequest, db: AsyncSession = Depends(get_db)):
-    """Register a new user."""
-    # Check if user exists
+    """Register a new user (legacy)."""
     existing = await db.execute(
         select(User).where((User.email == data.email) | (User.phone == data.phone))
     )
     if existing.scalar_one_or_none():
         raise HTTPException(status_code=400, detail="User already exists")
 
-    # Create user
     user = User(
         name=data.name,
         email=data.email,
@@ -50,11 +50,9 @@ async def register(data: RegisterRequest, db: AsyncSession = Depends(get_db)):
     db.add(user)
     await db.flush()
 
-    # Generate tokens
     access_token = create_access_token(str(user.id), user.role, user.user_type)
     refresh_token = create_refresh_token()
 
-    # Store refresh token
     token_record = RefreshToken(
         user_id=user.id,
         token_hash=hash_token(refresh_token),
@@ -72,8 +70,7 @@ async def register(data: RegisterRequest, db: AsyncSession = Depends(get_db)):
 
 @router.post("/login", response_model=TokenResponse)
 async def login(data: LoginRequest, db: AsyncSession = Depends(get_read_db)):
-    """Login with email/phone and password."""
-    # Find user
+    """Login with email/phone and password (legacy)."""
     result = await db.execute(
         select(User).where((User.email == data.identifier) | (User.phone == data.identifier))
     )
@@ -88,11 +85,9 @@ async def login(data: LoginRequest, db: AsyncSession = Depends(get_read_db)):
     if user.blacklisted:
         raise HTTPException(status_code=403, detail="Account is blacklisted")
 
-    # Generate tokens
     access_token = create_access_token(str(user.id), user.role, user.user_type)
     refresh_token = create_refresh_token()
 
-    # Store refresh token
     token_record = RefreshToken(
         user_id=user.id,
         token_hash=hash_token(refresh_token),
@@ -110,11 +105,9 @@ async def login(data: LoginRequest, db: AsyncSession = Depends(get_read_db)):
 
 @router.post("/otp/request")
 async def request_otp(data: OTPRequest, db: AsyncSession = Depends(get_db)):
-    """Request OTP for login/register."""
-    # Generate OTP
+    """Request OTP for login/register (legacy)."""
     otp_code = generate_otp()
 
-    # Store OTP
     otp_record = OTPToken(
         identifier=data.identifier,
         channel=data.channel,
@@ -132,8 +125,7 @@ async def request_otp(data: OTPRequest, db: AsyncSession = Depends(get_db)):
 
 @router.post("/otp/verify", response_model=TokenResponse)
 async def verify_otp(data: OTPVerifyRequest, db: AsyncSession = Depends(get_db)):
-    """Verify OTP and login."""
-    # Find OTP
+    """Verify OTP and login (legacy)."""
     result = await db.execute(
         select(OTPToken)
         .where(
@@ -155,17 +147,14 @@ async def verify_otp(data: OTPVerifyRequest, db: AsyncSession = Depends(get_db))
     if otp_record.attempts >= 3:
         raise HTTPException(status_code=400, detail="OTP attempts exceeded")
 
-    # Mark OTP as verified
     otp_record.verified_at = datetime.now(timezone.utc)
 
-    # Find or create user
     result = await db.execute(
         select(User).where((User.email == data.identifier) | (User.phone == data.identifier))
     )
     user = result.scalar_one_or_none()
 
     if not user:
-        # Create new user
         user = User(
             name="New User",
             email=data.identifier if "@" in data.identifier else f"{data.identifier}@temp.com",
@@ -176,11 +165,9 @@ async def verify_otp(data: OTPVerifyRequest, db: AsyncSession = Depends(get_db))
         db.add(user)
         await db.flush()
 
-    # Generate tokens
     access_token = create_access_token(str(user.id), user.role, user.user_type)
     refresh_token = create_refresh_token()
 
-    # Store refresh token
     token_record = RefreshToken(
         user_id=user.id,
         token_hash=hash_token(refresh_token),
@@ -198,8 +185,7 @@ async def verify_otp(data: OTPVerifyRequest, db: AsyncSession = Depends(get_db))
 
 @router.post("/refresh", response_model=TokenResponse)
 async def refresh_token(data: RefreshTokenRequest, db: AsyncSession = Depends(get_db)):
-    """Refresh access token."""
-    # Find refresh token
+    """Refresh access token (legacy)."""
     token_hash = hash_token(data.refresh_token)
     result = await db.execute(
         select(RefreshToken).where(
@@ -215,19 +201,15 @@ async def refresh_token(data: RefreshTokenRequest, db: AsyncSession = Depends(ge
     if token_record.expires_at < datetime.now(timezone.utc):
         raise HTTPException(status_code=401, detail="Refresh token expired")
 
-    # Get user
     user = await db.get(User, token_record.user_id)
     if not user or user.blacklisted:
         raise HTTPException(status_code=401, detail="User not found or blacklisted")
 
-    # Revoke old token
     token_record.revoked_at = datetime.now(timezone.utc)
 
-    # Generate new tokens
     access_token = create_access_token(str(user.id), user.role, user.user_type)
     new_refresh_token = create_refresh_token()
 
-    # Store new refresh token
     new_token_record = RefreshToken(
         user_id=user.id,
         token_hash=hash_token(new_refresh_token),
@@ -245,7 +227,7 @@ async def refresh_token(data: RefreshTokenRequest, db: AsyncSession = Depends(ge
 
 @router.post("/logout")
 async def logout(data: LogoutRequest, db: AsyncSession = Depends(get_db)):
-    """Logout and revoke refresh token."""
+    """Logout and revoke refresh token (legacy)."""
     token_hash = hash_token(data.refresh_token)
     result = await db.execute(
         select(RefreshToken).where(
@@ -259,3 +241,40 @@ async def logout(data: LogoutRequest, db: AsyncSession = Depends(get_db)):
         token_record.revoked_at = datetime.now(timezone.utc)
 
     return {"message": "Logged out successfully"}
+
+
+# ── Clerk Sync Endpoint ────────────────────────────────────────
+
+@router.post("/me")
+async def get_me_clerk(request: Request, db: AsyncSession = Depends(get_read_db)):
+    """Get current user info from Clerk token.
+
+    Frontend calls this after Clerk sign-in to sync/get local user data.
+    """
+    from app.api.deps import get_current_user
+    from fastapi import Depends as _Depends
+
+    # This endpoint is called by frontend with Clerk session token
+    # The get_current_user dependency handles Clerk JWT verification
+    auth_header = request.headers.get("authorization", "")
+    if not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Missing authorization header")
+
+    token = auth_header.split(" ", 1)[1]
+    from app.core.clerk_auth import verify_clerk_token
+    payload = verify_clerk_token(token)
+
+    if not payload:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    clerk_user_id = payload.get("sub", "")
+    result = await db.execute(
+        select(User).where(User.clerk_user_id == clerk_user_id)
+    )
+    user = result.scalar_one_or_none()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found. Please sign up first.")
+
+    from app.schemas.user import UserResponse
+    return UserResponse.model_validate(user)

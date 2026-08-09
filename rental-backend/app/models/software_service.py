@@ -52,11 +52,11 @@ class SoftwareService(BaseModel):
     vendor = Column(String(255), nullable=True)
     version = Column(String(50), nullable=True)
     license_type = Column(
-        SAEnum(LicenseType, name="license_type_enum"),
+        SAEnum(LicenseType, name="license_type_enum", create_type=False),
         nullable=False,
     )
     delivery_method = Column(
-        SAEnum(SoftwareDeliveryMethod, name="software_delivery_method_enum"),
+        SAEnum(SoftwareDeliveryMethod, name="software_delivery_method_enum", create_type=False),
         nullable=False,
     )
 
@@ -83,7 +83,7 @@ class SoftwareService(BaseModel):
     thumbnail_url = Column(Text, nullable=True)
 
     status = Column(
-        SAEnum(SoftwareServiceStatus, name="software_service_status_enum"),
+        SAEnum(SoftwareServiceStatus, name="software_service_status_enum", create_type=False),
         default=SoftwareServiceStatus.AVAILABLE,
     )
     is_featured = Column(Boolean, default=False)
@@ -120,7 +120,7 @@ class SoftwareRental(BaseModel):
     usage_current = Column(Numeric(12, 2), default=0)
 
     status = Column(
-        SAEnum(SoftwareRentalStatus, name="software_rental_status_enum"),
+        SAEnum(SoftwareRentalStatus, name="software_rental_status_enum", create_type=False),
         default=SoftwareRentalStatus.PENDING,
     )
 

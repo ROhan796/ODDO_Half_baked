@@ -42,7 +42,7 @@ class CRMContact(BaseModel):
 
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
     contact_type = Column(
-        SAEnum(CRMContactType, name="crm_contact_type_enum"),
+        SAEnum(CRMContactType, name="crm_contact_type_enum", create_type=False),
         nullable=False,
     )
     name = Column(String(255), nullable=False)
@@ -51,7 +51,7 @@ class CRMContact(BaseModel):
     company = Column(String(255), nullable=True)
     designation = Column(String(255), nullable=True)
     status = Column(
-        SAEnum(CRMContactStatus, name="crm_contact_status_enum"),
+        SAEnum(CRMContactStatus, name="crm_contact_status_enum", create_type=False),
         default=CRMContactStatus.NEW,
     )
     source = Column(String(100), nullable=True)
@@ -73,7 +73,7 @@ class CRMInteraction(BaseModel):
 
     contact_id = Column(UUID(as_uuid=True), ForeignKey("crm_contacts.id", ondelete="CASCADE"), nullable=False)
     interaction_type = Column(
-        SAEnum(CRMInteractionType, name="crm_interaction_type_enum"),
+        SAEnum(CRMInteractionType, name="crm_interaction_type_enum", create_type=False),
         nullable=False,
     )
     direction = Column(String(10), nullable=False)

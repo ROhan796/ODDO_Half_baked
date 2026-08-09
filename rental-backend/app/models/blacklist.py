@@ -23,7 +23,7 @@ class Blacklist(BaseModel):
 
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     reason = Column(
-        SAEnum(BlacklistReason, name="blacklist_reason_enum"),
+        SAEnum(BlacklistReason, name="blacklist_reason_enum", create_type=False),
         nullable=False,
     )
     description = Column(Text, nullable=True)

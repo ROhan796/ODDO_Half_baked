@@ -24,11 +24,16 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379"
     REDIS_MAX_CONNECTIONS: int = 20
 
-    # JWT
+    # JWT (legacy — kept for backward compatibility)
     JWT_SECRET_KEY: str = "change-this-to-a-random-secret-key"
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
     REFRESH_TOKEN_EXPIRE_DAYS: int = 30
+
+    # Clerk Authentication
+    CLERK_SECRET_KEY: str = ""
+    CLERK_PUBLISHABLE_KEY: str = ""
+    CLERK_WEBHOOK_SECRET: str = ""
 
     # File Storage (Backblaze B2 / S3-compatible)
     STORAGE_ACCOUNT_ID: str = ""
@@ -43,9 +48,13 @@ class Settings(BaseSettings):
     RAZORPAY_KEY_SECRET: str = ""
     RAZORPAY_WEBHOOK_SECRET: str = ""
 
-    # KYC Providers
+    # KYC Providers (DigiO)
     DIGIO_API_KEY: str = ""
     DIGIO_API_SECRET: str = ""
+    DIGIO_CLIENT_ID: str = ""
+    DIGIO_CLIENT_SECRET: str = ""
+    DIGIO_ENVIRONMENT: str = "sandbox"
+    DIGIO_BASE_URL: str = "https://ext.digio.in:444"
     SUREPASS_API_KEY: str = ""
     FACEIO_APP_ID: str = ""
     FACEIO_SECRET: str = ""

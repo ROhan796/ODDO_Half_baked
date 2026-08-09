@@ -22,7 +22,7 @@ class CustodyEvent(BaseModel):
     rental_id = Column(UUID(as_uuid=True), ForeignKey("rentals.id"), nullable=False)
     product_id = Column(UUID(as_uuid=True), ForeignKey("products.id"), nullable=False)
     event_type = Column(
-        SAEnum(CustodyEventType, name="custody_event_type_enum"),
+        SAEnum(CustodyEventType, name="custody_event_type_enum", create_type=False),
         nullable=False,
     )
     from_user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)

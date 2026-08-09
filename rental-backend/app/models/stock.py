@@ -40,7 +40,7 @@ class StockMovement(BaseModel):
     from_location_id = Column(UUID(as_uuid=True), ForeignKey("stock_locations.id"), nullable=True)
     to_location_id = Column(UUID(as_uuid=True), ForeignKey("stock_locations.id"), nullable=True)
     movement_type = Column(
-        SAEnum(MovementType, name="stock_movement_type_enum"),
+        SAEnum(MovementType, name="stock_movement_type_enum", create_type=False),
         nullable=False,
     )
     quantity = Column(Integer, nullable=False)
