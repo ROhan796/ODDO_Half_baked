@@ -24,6 +24,8 @@ from app.schemas.auth import (
     LogoutRequest,
 )
 from app.config import settings
+from app.core.permissions import ROLE_PERMISSIONS, Role
+from app.core.rbac_config import ROLE_DISPLAY_NAMES, ROLE_PORTALS
 
 router = APIRouter()
 
@@ -278,3 +280,45 @@ async def get_me_clerk(request: Request, db: AsyncSession = Depends(get_read_db)
 
     from app.schemas.user import UserResponse
     return UserResponse.model_validate(user)
+
+
+@router.get("/me/permissions")
+async def get_my_permissions(request: Request, db: AsyncSession = Depends(get_read_db)):
+    """Get current user's role, permissions, and accessible portals.
+
+    Frontend uses this to render role-based UI.
+    """
+    auth_header = request.headers.get("authorization", "")
+    if not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Missing authorization header")
+
+    token = auth_header.split(" ", 1)[1]
+    from app.core.clerk_auth import verify_clerk_token
+    payload = verify_clerk_token(token)
+
+    if not payload:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    clerk_user_id = payload.get("sub", "")
+    result = await db.execute(
+        select(User).where(User.clerk_user_id == clerk_user_id)
+    )
+    user = result.scalar_one_or_none()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    role = user.role
+    permissions = ROLE_PERMISSIONS.get(role, [])
+    display_name = ROLE_DISPLAY_NAMES.get(role, role)
+    portals = ROLE_PORTALS.get(role, ["customer"])
+
+    return {
+        "user_id": str(user.id),
+        "email": user.email,
+        "name": user.name,
+        "role": role,
+        "role_display_name": display_name,
+        "permissions": permissions,
+        "portals": portals,
+    }

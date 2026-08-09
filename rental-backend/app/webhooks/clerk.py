@@ -10,6 +10,7 @@ import json
 from app.utils.database import PrimarySessionLocal
 from app.models.user import User, UserRole, UserType
 from app.config import settings
+from app.core.rbac_config import get_role_for_email
 
 router = APIRouter()
 
@@ -97,13 +98,14 @@ async def clerk_webhook(request: Request):
                         await db.commit()
                         return {"status": "linked"}
 
-                # Create new user
+                # Create new user — auto-assign role based on email
+                assigned_role = get_role_for_email(primary_email) or UserRole.PORTAL_USER
                 user = User(
                     clerk_user_id=clerk_user_id,
                     name=name,
                     email=primary_email or f"{clerk_user_id}@clerk.local",
                     phone=phone or f"0000000000",
-                    role=UserRole.PORTAL_USER,
+                    role=assigned_role,
                     user_type=UserType.PERSONAL,
                     profile_photo_url=image_url or None,
                     kyc_status="pending",
@@ -112,7 +114,7 @@ async def clerk_webhook(request: Request):
                 )
                 db.add(user)
                 await db.commit()
-                return {"status": "created"}
+                return {"status": "created", "role": assigned_role}
 
         elif event_type == "user.updated":
             result = await db.execute(
