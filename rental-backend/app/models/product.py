@@ -36,9 +36,9 @@ class Category(BaseModel):
     deposit_percentage_override = Column(Numeric(5, 2), nullable=True)
     late_fee_rate_override = Column(Numeric(10, 2), nullable=True)
     is_active = Column(Boolean, default=True)
-    sort_order = Column(default=0)
+    sort_order = Column(Integer, default=0)
 
-    parent = relationship("Category", remote_side=[id], backref="subcategories")
+    parent = relationship("Category", remote_side="Category.id", backref="subcategories")
     products = relationship("Product", back_populates="category")
 
 
@@ -77,19 +77,19 @@ class Product(BaseModel):
         SAEnum(LateFeeMode, name="late_fee_mode_enum"),
         default=LateFeeMode.DAILY,
     )
-    grace_period_minutes = Column(default=30)
+    grace_period_minutes = Column(Integer, default=30)
     max_late_fee_multiplier = Column(Numeric(3, 1), default=2.0)
-    min_rental_duration = Column(default=1)
+    min_rental_duration = Column(Integer, default=1)
     max_rental_duration = Column(Integer, nullable=True)
     images = Column(ARRAY(Text), default=[])
     thumbnail_url = Column(Text, nullable=True)
     tags = Column(ARRAY(Text), default=[])
     metadata_ = Column("metadata", JSONB, default={})
-    total_rentals = Column(default=0)
+    total_rentals = Column(Integer, default=0)
     total_revenue = Column(Numeric(14, 2), default=0)
-    total_damage_reports = Column(default=0)
+    total_damage_reports = Column(Integer, default=0)
     is_featured = Column(Boolean, default=False)
-    sort_order = Column(default=0)
+    sort_order = Column(Integer, default=0)
 
     category = relationship("Category", back_populates="products")
     variants = relationship("ProductVariant", back_populates="product", cascade="all, delete-orphan")

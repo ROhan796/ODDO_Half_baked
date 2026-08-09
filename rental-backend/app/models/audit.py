@@ -2,9 +2,9 @@
 import uuid
 from sqlalchemy import (
     Column, String, DateTime, Text, Enum as SAEnum,
-    ForeignKey, JSONB
+    ForeignKey
 )
-from sqlalchemy.dialects.postgresql import UUID, INET
+from sqlalchemy.dialects.postgresql import UUID, INET, JSONB
 from app.models.base import BaseModel
 import enum
 

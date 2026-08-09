@@ -47,7 +47,6 @@ class Quotation(BaseModel):
 
     # Relationships
     customer = relationship("User", foreign_keys=[customer_id])
-    template = relationship("QuotationTemplate", back_populates="quotations")
 
 
 class QuotationTemplate(BaseModel):
@@ -58,5 +57,3 @@ class QuotationTemplate(BaseModel):
     template_data = Column(JSONB, nullable=False, default={})
     is_default = Column(Boolean, default=False)
     created_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
-
-    quotations = relationship("Quotation", back_populates="template")

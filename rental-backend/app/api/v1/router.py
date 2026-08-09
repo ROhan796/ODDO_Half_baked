@@ -21,6 +21,15 @@ from app.api.v1 import (
     admin,
     files,
     dashboard,
+    software_services,
+    software_rentals,
+    agent_tasks,
+    inspections,
+    purchase_orders,
+    addresses,
+    search,
+    departments,
+    custody,
 )
 
 api_router = APIRouter()
@@ -45,3 +54,12 @@ api_router.include_router(notifications.router, prefix="/notifications", tags=["
 api_router.include_router(admin.router, prefix="/admin", tags=["Admin"])
 api_router.include_router(files.router, prefix="/files", tags=["Files"])
 api_router.include_router(dashboard.router, prefix="/dashboard", tags=["Dashboard"])
+api_router.include_router(software_services.router, prefix="/software-services", tags=["Software Services"])
+api_router.include_router(software_rentals.router, prefix="/software-rentals", tags=["Software Rentals"])
+api_router.include_router(agent_tasks.router, prefix="/agent-tasks", tags=["Agent Tasks"])
+api_router.include_router(inspections.router, prefix="/inspections", tags=["Inspections"])
+api_router.include_router(purchase_orders.router, prefix="/purchase-orders", tags=["Purchase Orders"])
+api_router.include_router(addresses.router, prefix="/addresses", tags=["Addresses"])
+api_router.include_router(search.router, prefix="/search", tags=["Search"])
+api_router.include_router(departments.router, prefix="/departments", tags=["Departments"])
+api_router.include_router(custody.router, prefix="/custody", tags=["Custody"])

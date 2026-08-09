@@ -97,9 +97,9 @@ class User(BaseModel):
     referred_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
 
     # Relationships
-    enterprise = relationship("Enterprise", back_populates="members", foreign_keys=[enterprise_id])
+    enterprise = relationship("Enterprise", foreign_keys=[enterprise_id])
     refresh_tokens = relationship("RefreshToken", back_populates="user", cascade="all, delete-orphan")
-    kyc_records = relationship("KYCRecord", back_populates="user", cascade="all, delete-orphan")
+    kyc_records = relationship("KYCRecord", back_populates="user", cascade="all, delete-orphan", foreign_keys="[KYCRecord.user_id]")
     trust_history = relationship("TrustScoreHistory", back_populates="user", cascade="all, delete-orphan")
 
     __table_args__ = (

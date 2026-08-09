@@ -53,14 +53,14 @@ class Enterprise(BaseModel):
         default="pending",
     )
     kyc_verified_at = Column(DateTime(timezone=True), nullable=True)
-    trust_score = Column(default=0)
+    trust_score = Column(Integer, default=0)
     credit_line_enabled = Column(Boolean, default=False)
     credit_limit_inr = Column(Numeric(12, 2), nullable=True)
     credit_used_inr = Column(Numeric(12, 2), default=0)
-    credit_days = Column(default=30)
+    credit_days = Column(Integer, default=30)
     pricelist_id = Column(UUID(as_uuid=True), ForeignKey("pricelists.id"), nullable=True)
     account_manager_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
-    total_rentals = Column(default=0)
+    total_rentals = Column(Integer, default=0)
     total_spend = Column(Numeric(14, 2), default=0)
 
     # Relationships

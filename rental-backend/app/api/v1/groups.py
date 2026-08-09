@@ -12,6 +12,7 @@ from app.schemas.group import (
     GroupCreate,
     GroupResponse,
     GroupMemberAdd,
+    GroupMemberResponse,
     GroupVoteCreate,
     GroupVoteResponse,
     GroupVoteCast,
@@ -79,7 +80,7 @@ async def get_group(
     return group
 
 
-@router.post("/{group_id}/members", response_model=GroupMember)
+@router.post("/{group_id}/members", response_model=GroupMemberResponse)
 async def add_member(
     group_id: uuid.UUID,
     data: GroupMemberAdd,

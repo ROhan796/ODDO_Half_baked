@@ -1,7 +1,7 @@
 # app/api/v1/users.py
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func
 from typing import Optional
 import uuid
 
@@ -15,9 +15,11 @@ router = APIRouter()
 
 
 @router.get("/me", response_model=UserResponse)
-async def get_current_user_profile(current_user: User = Depends(get_current_user)):
+async def get_current_user_profile(
+    current_user: User = Depends(get_current_user),
+):
     """Get current user profile."""
-    return current_user
+    return UserResponse.model_validate(current_user)
 
 
 @router.put("/me", response_model=UserResponse)
@@ -30,7 +32,7 @@ async def update_current_user_profile(
     update_data = data.model_dump(exclude_unset=True)
     for field, value in update_data.items():
         setattr(current_user, field, value)
-    return current_user
+    return UserResponse.model_validate(current_user)
 
 
 @router.get("/", response_model=UserListResponse)
@@ -55,19 +57,15 @@ async def list_users(
     if role:
         query = query.where(User.role == role)
 
-    # Get total count
-    from sqlalchemy import func
-
     count_query = select(func.count()).select_from(query.subquery())
     total = (await db.execute(count_query)).scalar()
 
-    # Paginate
     query = query.offset((page - 1) * limit).limit(limit)
     result = await db.execute(query)
     users = result.scalars().all()
 
     return UserListResponse(
-        items=users,
+        items=[UserResponse.model_validate(u) for u in users],
         total=total,
         page=page,
         limit=limit,
@@ -85,4 +83,4 @@ async def get_user(
     user = await db.get(User, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    return user
+    return UserResponse.model_validate(user)

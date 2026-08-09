@@ -21,6 +21,12 @@ from app.models.crm import CRMContact, CRMInteraction, CRMTag
 from app.models.stock import StockLocation, StockMovement, StockLevel
 from app.models.loyalty import LoyaltyPointsLedger, Referral
 from app.models.audit import AuditLog
+from app.models.software_service import SoftwareService, SoftwareRental, SoftwareUsageLog
+from app.models.agent_task import Agent, AgentTask
+from app.models.inspection import InspectionReport
+from app.models.purchase_order import PORequisition
+from app.models.address import UserAddress
+from app.models.department import Department
 
 __all__ = [
     "BaseModel",
@@ -75,4 +81,13 @@ __all__ = [
     "LoyaltyPointsLedger",
     "Referral",
     "AuditLog",
+    "SoftwareService",
+    "SoftwareRental",
+    "SoftwareUsageLog",
+    "Agent",
+    "AgentTask",
+    "InspectionReport",
+    "PORequisition",
+    "UserAddress",
+    "Department",
 ]

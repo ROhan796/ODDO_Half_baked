@@ -31,7 +31,7 @@ class Rental(BaseModel):
     customer_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     product_id = Column(UUID(as_uuid=True), ForeignKey("products.id"), nullable=False)
     quotation_id = Column(UUID(as_uuid=True), ForeignKey("quotations.id"), nullable=True)
-    order_id = Column(UUID(as_uuid=True), ForeignKey("orders.id"), nullable=True)
+    order_id = Column(UUID(as_uuid=True), nullable=True)
     status = Column(
         SAEnum(RentalStatus, name="rental_status_enum"),
         default=RentalStatus.PENDING,

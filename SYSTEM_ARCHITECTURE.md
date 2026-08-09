@@ -1261,4 +1261,65 @@ SENTRY_DSN=https://xxx@sentry.io/xxx
 
 ---
 
+## 14. Software Services Architecture
+
+### 14.1 Overview
+
+Reprico supports **both Hardware AND Software service rentals**. Software services enable customers to rent SaaS subscriptions, software licenses, cloud compute credits, API quotas, and digital content access.
+
+### 14.2 Software Service Types
+
+| License Type | Description | Delivery Method | Usage Tracking |
+|-------------|-------------|-----------------|----------------|
+| `saas_subscription` | Monthly/Annual SaaS access | Cloud access credentials | Time-based |
+| `node_locked` | Single-machine license key | Email license key | None |
+| `floating` | Multi-user license server | License server URL | Concurrent users |
+| `cloud_credit` | GPU/CPU/Storage credits | API key | Compute hours |
+| `api_quota` | API call quota | API key | Call count |
+
+### 14.3 Software Service API Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/v1/software-services/` | List software services |
+| POST | `/api/v1/software-services/` | Create software service |
+| GET | `/api/v1/software-services/{id}` | Get software service |
+| PUT | `/api/v1/software-services/{id}` | Update software service |
+| DELETE | `/api/v1/software-services/{id}` | Archive software service |
+| GET | `/api/v1/software-services/{id}/availability` | Check license availability |
+| POST | `/api/v1/software-rentals/` | Rent a software service |
+| GET | `/api/v1/software-rentals/` | List software rentals |
+| GET | `/api/v1/software-rentals/{id}` | Get software rental |
+| POST | `/api/v1/software-rentals/{id}/activate` | Activate license |
+| POST | `/api/v1/software-rentals/{id}/deactivate` | Revoke access |
+| POST | `/api/v1/software-rentals/{id}/usage` | Log usage |
+| GET | `/api/v1/software-rentals/{id}/usage` | Get usage logs |
+
+### 14.4 Software Service Data Model
+
+```
+software_services
+├── name, slug, vendor, version
+├── license_type (saas_subscription | node_locked | floating | cloud_credit | api_quota)
+├── delivery_method (email_license_key | cloud_access | api_key | download_link)
+├── pricing (hourly | daily | weekly | monthly | annual)
+├── access_control (max_concurrent_users, max_seats, ip_whitelist)
+├── technical (system_requirements, api_endpoint, documentation_url)
+└── status (available | rented | deprecated | inactive)
+
+software_rentals
+├── rental_number, customer_id, software_service_id
+├── period (start_at, end_at)
+├── license (license_key, license_server_url, api_key_hash)
+├── usage (usage_metric, usage_limit, usage_current)
+├── status (pending | active | suspended | expired | cancelled)
+└── relations (quotation_id, invoice_id)
+
+software_usage_logs
+├── software_rental_id, metric_type, quantity
+└── metadata (JSONB)
+```
+
+---
+
 **— End of SYSTEM_ARCHITECTURE.md —**

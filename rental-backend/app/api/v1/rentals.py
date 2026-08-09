@@ -67,12 +67,15 @@ async def create_rental(
     current_user: User = require_permission(Permission.RENTAL_CREATE_ANY.value),
 ):
     """Create a new rental."""
-    rental = Rental(
-        **data.model_dump(),
-        daily_rate=0,  # TODO: Calculate from product
-        total_amount=0,  # TODO: Calculate
+    from app.services.rental_service import RentalService
+
+    service = RentalService(db)
+    rental = await service.create_rental(
+        data=data.model_dump(),
+        created_by=current_user.id,
     )
-    db.add(rental)
+    await db.commit()
+    await db.refresh(rental)
     return rental
 
 

@@ -2,7 +2,7 @@
 import uuid
 from sqlalchemy import (
     Column, String, Boolean, DateTime, Text, Enum as SAEnum,
-    ForeignKey, JSON
+    ForeignKey, JSON, Integer
 )
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from app.models.base import BaseModel
@@ -55,7 +55,7 @@ class Notification(BaseModel):
     delivered_at = Column(DateTime(timezone=True), nullable=True)
     read_at = Column(DateTime(timezone=True), nullable=True)
     error_message = Column(Text, nullable=True)
-    retry_count = Column(default=0)
+    retry_count = Column(Integer, default=0)
     reference_id = Column(UUID(as_uuid=True), nullable=True)
     reference_type = Column(String(50), nullable=True)
 

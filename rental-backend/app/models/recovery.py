@@ -1,7 +1,7 @@
 # app/models/recovery.py
 import uuid
 from sqlalchemy import (
-    Column, String, DateTime, Text, Enum as SAEnum,
+    Column, String, Boolean, DateTime, Text, Enum as SAEnum,
     ForeignKey, Numeric
 )
 from sqlalchemy.dialects.postgresql import UUID, ARRAY

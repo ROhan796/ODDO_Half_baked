@@ -11,17 +11,23 @@ class R2Storage:
     """Cloudflare R2 storage client."""
 
     def __init__(self):
-        self.s3_client = boto3.client(
-            "s3",
-            endpoint_url=settings.R2_ENDPOINT_URL,
-            aws_access_key_id=settings.R2_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.R2_SECRET_ACCESS_KEY,
-            config=Config(
-                signature_version="s3v4",
-                s3={"addressing_style": "path"},
-            ),
-        )
+        self._s3_client = None
         self.bucket_name = settings.R2_BUCKET_NAME
+
+    @property
+    def s3_client(self):
+        if self._s3_client is None:
+            self._s3_client = boto3.client(
+                "s3",
+                endpoint_url=settings.R2_ENDPOINT_URL,
+                aws_access_key_id=settings.R2_ACCESS_KEY_ID,
+                aws_secret_access_key=settings.R2_SECRET_ACCESS_KEY,
+                config=Config(
+                    signature_version="s3v4",
+                    s3={"addressing_style": "path"},
+                ),
+            )
+        return self._s3_client
 
     async def generate_presigned_upload_url(
         self,

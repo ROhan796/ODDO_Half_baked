@@ -2604,6 +2604,75 @@ Status updated to 'completed'
 
 ---
 
+## 33. Software Services for Rentals
+
+### 33.1 Overview
+
+Reprico is not limited to hardware rentals. The platform supports **both Hardware AND Software service rentals**, enabling customers to rent:
+
+- **SaaS Subscriptions** — Adobe Creative Cloud, Microsoft 365, Figma Team, Slack Enterprise
+- **Software Licenses** — Windows Server, VMware, AutoCAD, JetBrains, Creative Suite
+- **Cloud Compute** — GPU instances, CPU clusters, storage buckets, CDN bandwidth
+- **API Access** — Third-party API credits, data feeds, webhook quotas
+- **Digital Content** — Stock footage libraries, music licenses, font packages, template packs
+- **Development Tools** — CI/CD pipelines, testing frameworks, monitoring platforms, code analysis
+- **Plugin/Extension Licenses** — WordPress plugins, Shopify apps, VS Code extensions
+- **Data & Analytics** — Market data feeds, analytics platforms, BI tool access
+
+### 33.2 Software Service Categories
+
+| Category | Examples | Pricing Model |
+|----------|----------|---------------|
+| Creative Software | Adobe CC, Figma, Canva Pro | Monthly subscription |
+| Office & Productivity | Microsoft 365, Google Workspace | Per-seat monthly |
+| Development Tools | JetBrains, GitHub Enterprise | Per-seat annual |
+| Cloud Infrastructure | AWS credits, GCP, Azure | Usage-based |
+| Data & Analytics | Bloomberg Terminal, Tableau | Monthly subscription |
+| Security Tools | CrowdStrike, 1Password Business | Per-seat monthly |
+| Marketing Tools | HubSpot, Mailchimp, SEMrush | Tier-based monthly |
+| Design Assets | Adobe Stock, Envato, Shutterstock | Per-download or subscription |
+
+### 33.3 Software Rental Workflow
+
+```
+Customer browses catalog → Selects software service → Chooses rental period
+→ System checks license availability → Calculates rental fee
+→ Customer pays deposit + rental fee → License provisioned
+→ Access credentials delivered (email/API/cloud) → Usage tracked
+→ Rental period ends → Access revoked → Deposit refunded
+→ Usage logs retained for audit
+```
+
+### 33.4 API Endpoints (13 new endpoints)
+
+| Module | Method | Path | Description |
+|--------|--------|------|-------------|
+| Software Services | GET | `/api/v1/software-services/` | List all software services |
+| Software Services | POST | `/api/v1/software-services/` | Create software service (admin) |
+| Software Services | GET | `/api/v1/software-services/{id}` | Get software service detail |
+| Software Services | PUT | `/api/v1/software-services/{id}` | Update software service |
+| Software Services | DELETE | `/api/v1/software-services/{id}` | Archive software service |
+| Software Services | GET | `/api/v1/software-services/{id}/availability` | Check license availability |
+| Software Rentals | POST | `/api/v1/software-rentals/` | Rent a software service |
+| Software Rentals | GET | `/api/v1/software-rentals/` | List software rentals |
+| Software Rentals | GET | `/api/v1/software-rentals/{id}` | Get software rental detail |
+| Software Rentals | POST | `/api/v1/software-rentals/{id}/activate` | Activate license |
+| Software Rentals | POST | `/api/v1/software-rentals/{id}/deactivate` | Revoke access |
+| Software Rentals | POST | `/api/v1/software-rentals/{id}/usage` | Log usage metric |
+| Software Rentals | GET | `/api/v1/software-rentals/{id}/usage` | Get usage logs |
+
+### 33.5 Database Tables (3 new tables)
+
+- `software_services` — Software service catalog with license types, pricing, access control
+- `software_rentals` — Software rental orders with license keys, usage tracking
+- `software_usage_logs` — Granular usage logging for API and cloud services
+
+### 33.6 Frontend Integration
+
+The frontend API client (`lib/api.ts`) includes full typed methods for all software service endpoints. The catalog page can filter by `type=hardware` or `type=software` to show both categories.
+
+---
+
 **— End of Rental Management System Project Plan v3.0 —**
 
 **CONFIDENTIAL — INTERNAL USE ONLY**

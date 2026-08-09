@@ -1,5 +1,7 @@
 """Shared test fixtures."""
 import asyncio
+import json
+import sqlite3
 import uuid
 from datetime import datetime, timedelta, timezone
 from typing import AsyncGenerator
@@ -7,12 +9,105 @@ from typing import AsyncGenerator
 import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
+from sqlalchemy import String, Text, TypeDecorator
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.ext.compiler import compiles
+
+# Make sqlite3 accept Python list/dict/tuple by auto-serializing to JSON
+sqlite3.register_adapter(list, json.dumps)
+sqlite3.register_adapter(dict, json.dumps)
+sqlite3.register_adapter(tuple, json.dumps)
+
+
+class UUIDType(TypeDecorator):
+    """SQLite-compatible UUID type that converts to/from uuid.UUID objects."""
+    impl = Text
+    cache_ok = True
+
+    def process_bind_param(self, value, dialect):
+        if value is None:
+            return None
+        if isinstance(value, uuid.UUID):
+            return str(value)
+        return str(value)
+
+    def process_result_value(self, value, dialect):
+        if value is None:
+            return None
+        if isinstance(value, uuid.UUID):
+            return value
+        try:
+            return uuid.UUID(value)
+        except (ValueError, AttributeError):
+            return value
+
+
+class SQLiteArrayType(TypeDecorator):
+    """SQLite-compatible ARRAY type that stores JSON strings."""
+    impl = Text
+    cache_ok = True
+
+    def process_bind_param(self, value, dialect):
+        if value is None:
+            return None
+        if isinstance(value, (list, tuple)):
+            return json.dumps(list(value))
+        return value
+
+    def process_result_value(self, value, dialect):
+        if value is None:
+            return None
+        try:
+            return json.loads(value)
+        except (json.JSONDecodeError, TypeError):
+            return value
+
+
+class SQLiteJSONType(TypeDecorator):
+    """SQLite-compatible JSONB type that stores JSON strings."""
+    impl = Text
+    cache_ok = True
+
+    def process_bind_param(self, value, dialect):
+        if value is None:
+            return None
+        if isinstance(value, (dict, list)):
+            return json.dumps(value)
+        return value
+
+    def process_result_value(self, value, dialect):
+        if value is None:
+            return None
+        try:
+            return json.loads(value)
+        except (json.JSONDecodeError, TypeError):
+            return value
+
+
+def _patch_pg_types_for_sqlite():
+    """Replace PostgreSQL-specific column types with SQLite-compatible TypeDecorators."""
+    from app.utils.database import Base
+    from sqlalchemy.dialects.postgresql import ARRAY as PG_ARRAY, JSONB, INET, UUID as PG_UUID
+
+    for table in Base.metadata.tables.values():
+        for column in table.columns:
+            type_name = type(column.type).__name__
+            if type_name in ("UUID",):
+                column.type = UUIDType()
+            elif type_name in ("ARRAY",):
+                column.type = SQLiteArrayType()
+            elif type_name == "JSONB":
+                column.type = SQLiteJSONType()
+            elif type_name == "INET":
+                column.type = Text()
+
 
 from app.main import app
 from app.utils.database import Base
 from app.core.auth import create_access_token, hash_password
 from app.models.user import User, UserRole, UserType
+
+_patch_pg_types_for_sqlite()
 
 TEST_DATABASE_URL = "sqlite+aiosqlite:///./test.db"
 

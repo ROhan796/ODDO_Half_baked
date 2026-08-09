@@ -18,7 +18,6 @@ async def test_create_rental(client: AsyncClient, db_session, seed_user, seed_ad
         slug="test-product-integration",
         category_id=cat.id,
         status=ProductStatus.AVAILABLE,
-        daily_rate=Decimal("500.00"),
         purchase_price=Decimal("50000.00"),
         deposit_percentage=Decimal("20.00"),
     )
@@ -71,7 +70,6 @@ async def test_get_rental(client: AsyncClient, db_session, seed_user, seed_admin
         slug="test-product-get",
         category_id=cat.id,
         status=ProductStatus.RENTED,
-        daily_rate=Decimal("500.00"),
         purchase_price=Decimal("50000.00"),
         deposit_percentage=Decimal("20.00"),
     )
